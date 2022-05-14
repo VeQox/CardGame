@@ -5,7 +5,7 @@
         public static void Main()
         {
             Console.OutputEncoding = System.Text.Encoding.Unicode;
-            CardGame game = new(2);
+            CardGame game = new(3);
             game.Start();
         }
     }

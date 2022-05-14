@@ -22,18 +22,29 @@
             bool reverse = false;
             int cardCount = 1;
             int currentPlayer = 0;
+            int startingPlayer = 0;
             List<Card> hits = new();
             while (cardCount != 0)
             {
-                
                 GetNewHands(cardCount);
+
+                Player current = Players[startingPlayer];
+                Console.WriteLine($"Player: {current.Name}");
+                Console.WriteLine(current.Hand);
+                Console.Write("Call: ");
+                current.Calls = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine();
+
                 foreach (Player player in Players)
                 {
-                    Console.WriteLine($"Player: {player.Name}");
-                    Console.WriteLine(player.Hand);
-                    Console.Write("Call: ");
-                    player.Calls = Convert.ToInt32(Console.ReadLine());
-                    Console.WriteLine();
+                    if(player != current)
+                    {
+                        Console.WriteLine($"Player: {player.Name}");
+                        Console.WriteLine(player.Hand);
+                        Console.Write("Call: ");
+                        player.Calls = Convert.ToInt32(Console.ReadLine());
+                        Console.WriteLine();
+                    }
                 }
 
                 for (int i = 0; i < cardCount; i++)
@@ -59,8 +70,10 @@
                         }
                         Console.WriteLine();
                     }
-                    
-                    Players[GetWinnerOfHit(hits)].Hits++;
+
+                    int winnerIndex = GetWinnerOfHit(hits);
+                    Players[winnerIndex].Hits++;
+                    currentPlayer = winnerIndex;
                 }
 
                 Console.Clear();
@@ -80,13 +93,17 @@
                 if (reverse) cardCount--;
                 if (!reverse) cardCount++;
                 if (!reverse && cardCount == 10) reverse = true;
+
                 
+                startingPlayer = SwitchPlayer(startingPlayer);
+                currentPlayer = startingPlayer;
             }
             Console.Clear();
             foreach (Player player in Players)
             {
                 Console.WriteLine($"Player: {player.Name} -> Points: {player.Points}");
             }
+            Console.WriteLine();
             Players.Sort();
             Console.WriteLine($"Winner: {Players[0].Name} -> Points: {Players[0].Points}");
         }
@@ -115,7 +132,10 @@
 
         public int SwitchPlayer(int currentPlayer)
         {
-            return currentPlayer < Players.Count - 1 ? currentPlayer++ : 0;
+            if (currentPlayer < Players.Count - 1)
+                return currentPlayer + 1;
+            else
+                return 0;
         }
 
         public void Print()
